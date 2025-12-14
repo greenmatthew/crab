@@ -1,0 +1,45 @@
+@page "/sqlite-version"
+@using Microsoft.Data.Sqlite
+
+<PageTitle>SQLite Version</PageTitle>
+
+<h1>SQLite Version</h1>
+
+@if (error != null)
+{
+    <div style="color: red; padding: 10px; border: 2px solid red;">
+        <strong>❌ Error:</strong>
+        <pre>@error</pre>
+    </div>
+}
+else if (sqliteVersion != null)
+{
+    <div style="color: green; padding: 10px; border: 2px solid green;">
+        <strong>✅ SQLite Version:</strong> @sqliteVersion
+    </div>
+}
+else
+{
+    <p>Testing SQLite...</p>
+}
+
+@code {
+    private string? sqliteVersion;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            using var connection = new SqliteConnection("Data Source=:memory:");
+            await connection.OpenAsync();
+            using var command = connection.CreateCommand();
+            command.CommandText = "SELECT sqlite_version()";
+            sqliteVersion = (await command.ExecuteScalarAsync())?.ToString();
+        }
+        catch (Exception ex)
+        {
+            error = ex.ToString();
+        }
+    }
+}
