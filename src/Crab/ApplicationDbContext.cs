@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crab
 {
-    public class BudgetContext : DbContext
+    public class DbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         #region Consts & Static
         #endregion Consts & Static
