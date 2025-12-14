@@ -23,6 +23,8 @@ namespace Crab
         [MaxLength(200)]
         public required string Name { get; set; }
 
+        public ICollection<Allocation> Allocations { get; set; } = new List<Allocation>();
+
         #endregion Fields & Properties
         
         #region Constructors
