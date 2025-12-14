@@ -2,12 +2,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Crab
 {
-    public class DbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class ApplicationDbContext : DbContext
     {
         #region Consts & Static
         #endregion Consts & Static
         
         #region Fields & Properties
+
+        public DbSet<TaxProfile> TaxProfiles { get; set; }
+        public DbSet<TaxBracket> TaxBrackets { get; set; }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Allocation> Allocations { get; set; }
@@ -26,6 +29,16 @@ namespace Crab
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // When a TaxProfile is deleted, cascade delete all associated TaxBrackets
+            // (tax brackets without a parent profile are meaningless orphaned data)
+            modelBuilder.Entity<TaxProfile>()
+                .HasMany(p => p.TaxBrackets)
+                .WithOne(b => b.TaxProfile)
+                .HasForeignKey(b => b.TaxProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // When a Category is deleted, set CategoryId to null on all associated Allocations
+            // (allocations can exist without a category)
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Allocations)
                 .WithOne(a => a.Category)
