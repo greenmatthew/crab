@@ -20,8 +20,8 @@ namespace Crab
         public required string Name { get; set; }
 
         [ForeignKey("Category")]
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
+        public int? CategoryId { get; set; } = null;
+        public Category? Category { get; set; } = null;
 
         public enum AllocationType
         {
