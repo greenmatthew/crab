@@ -9,6 +9,8 @@ namespace Crab
         
         #region Fields & Properties
 
+        public DbSet<Income> Income { get; set; }
+
         public DbSet<TaxProfile> TaxProfiles { get; set; }
         public DbSet<TaxBracket> TaxBrackets { get; set; }
 
@@ -29,6 +31,10 @@ namespace Crab
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Enforces there being a single income record
+            modelBuilder.Entity<Income>()
+                .ToTable(t => t.HasCheckConstraint("CK_Income_SingleRow", "Id = 1"));
+
             // When a TaxProfile is deleted, cascade delete all associated TaxBrackets
             // (tax brackets without a parent profile are meaningless orphaned data)
             modelBuilder.Entity<TaxProfile>()
